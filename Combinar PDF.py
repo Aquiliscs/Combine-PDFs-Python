@@ -1,30 +1,27 @@
 import os
-from datetime import datetime
-from PyPDF2 import PdfMerger
+import tkinter as tk
+from tkinter import filedialog
+from PyPDF2 import PdfMerger, PdfReader
 
-# diretório onde os arquivos PDF estão localizados
-pdf_dir = 'C:/Temp/PDF'
+# seleciona a pasta de onde os arquivos PDF serão combinados
+folder_selected = r'C:\Temp\PDF'
 
-# lista todos os arquivos PDF no diretório
-pdf_files = [os.path.join(pdf_dir, f) for f in os.listdir(pdf_dir) if f.endswith('.pdf')]
+# cria um objeto de mesclagem de arquivos PDF
+pdf_merger = PdfMerger()
 
-# cria um objeto PdfFileMerger para combinar os arquivos PDF
-merger = PdfMerger()
+# mescla todos os arquivos PDF na pasta selecionada
+for filename in os.listdir(folder_selected):
+    if filename.endswith('.pdf'):
+        pdf_path = os.path.join(folder_selected, filename)
+        pdf_merger.append(PdfReader(open(pdf_path, 'rb')))
 
-# adiciona cada arquivo PDF ao objeto PdfMerger
-for pdf in pdf_files:
-    merger.append(open(pdf, 'rb'))
+# solicita ao usuário que escolha o nome do arquivo PDF resultante
+root = tk.Tk()
+root.withdraw()
+result_filename = filedialog.asksaveasfilename(initialdir=r'C:\Temp', defaultextension='.pdf')
 
-# cria um nome de arquivo para o arquivo PDF combinado
-filename = datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.pdf'
+# salva o arquivo PDF resultante com o nome escolhido
+with open(result_filename, 'wb') as output:
+    pdf_merger.write(output)
 
-# diretório onde o arquivo combinado será salvo
-output_dir = 'C:/Temp'
-
-# salva o arquivo PDF combinado com o nome de arquivo criado anteriormente
-output_file = os.path.join(output_dir, filename)
-with open(output_file, 'wb') as outfile:
-    merger.write(outfile)
-
-# fecha o objeto PdfMerger
-merger.close()
+print('Os arquivos PDF foram combinados com sucesso!')
