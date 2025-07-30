@@ -25,3 +25,5 @@ with open(result_filename, 'wb') as output:
     pdf_merger.write(output)
 
 print('Os arquivos PDF foram combinados com sucesso!')
+
+#commit teste
